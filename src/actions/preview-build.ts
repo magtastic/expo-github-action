@@ -81,7 +81,7 @@ export async function previewAction(input = collectPreviewBuildActionInput()) {
       : null;
     const messageBody = createMessageBodyFingerprintCompatible(latestEasBuildInfo);
     await maybeCreateCommentAsync(input, messageId, messageBody);
-    setOutputs(variables, messageId, messageBody);
+    setOutputs(variables, messageId, messageBody, diff);
     return;
   }
 
@@ -111,7 +111,7 @@ export async function previewAction(input = collectPreviewBuildActionInput()) {
   const messageId = template(input.commentId, variables);
   const messageBody = createMessageBodyInBuilding(builds, diff, input);
   await maybeCreateCommentAsync(input, messageId, messageBody);
-  setOutputs(variables, messageId, messageBody);
+  setOutputs(variables, messageId, messageBody, diff);
 }
 
 /**
@@ -171,12 +171,18 @@ async function maybeCreateCommentAsync(
   }
 }
 
-function setOutputs(variables: ReturnType<typeof getVariables>, messageId: string, messageBody: string) {
+function setOutputs(
+  variables: ReturnType<typeof getVariables>,
+  messageId: string,
+  messageBody: string,
+  diff: FingerprintSource[]
+) {
   for (const [name, value] of Object.entries(variables)) {
     setOutput(name, value);
   }
   setOutput('commentId', messageId);
   setOutput('comment', messageBody);
+  setOutput('fingerprint-diff', diff);
 }
 
 /**
@@ -345,7 +351,7 @@ async function handleNonPullRequest(config: ExpoConfig, input: ReturnType<typeof
 
   info('Updating fingerprint database for the default branch push event.');
   const dbManager = await createFingerprintDbManagerAsync(input.packager, input.fingerprintDbCacheKey);
-  const { currentFingerprint } = await createFingerprintOutputAsync(dbManager, input);
+  const { currentFingerprint, diff } = await createFingerprintOutputAsync(dbManager, input);
   const associatedPRs = await getPullRequestFromGitCommitShaAsync(
     { token: input.githubToken },
     input.currentGitCommitHash
@@ -374,7 +380,7 @@ async function handleNonPullRequest(config: ExpoConfig, input: ReturnType<typeof
     manyBuilds,
   });
   const variables = getVariables(config, []);
-  setOutputs(variables, '', '');
+  setOutputs(variables, '', '', diff);
 }
 
 async function queryEasBuildIdsFromPrAsync(

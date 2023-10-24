@@ -66,3 +66,6 @@ outputs:
     description: Absolute URL to platform-independent build on expo.dev
   iosAppVersion:
     description: iOS build number
+
+  fingerprint-diff:
+    description: The diff between the current and the previous fingerprint

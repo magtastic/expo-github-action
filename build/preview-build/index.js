@@ -76383,7 +76383,7 @@ async function previewAction(input = collectPreviewBuildActionInput()) {
             : null;
         const messageBody = createMessageBodyFingerprintCompatible(latestEasBuildInfo);
         await maybeCreateCommentAsync(input, messageId, messageBody);
-        setOutputs(variables, messageId, messageBody);
+        setOutputs(variables, messageId, messageBody, diff);
         return;
     }
     (0,core.info)('Fingerprint is changed, creating new builds...');
@@ -76408,7 +76408,7 @@ async function previewAction(input = collectPreviewBuildActionInput()) {
     const messageId = template(input.commentId, variables);
     const messageBody = createMessageBodyInBuilding(builds, diff, input);
     await maybeCreateCommentAsync(input, messageId, messageBody);
-    setOutputs(variables, messageId, messageBody);
+    setOutputs(variables, messageId, messageBody, diff);
 }
 /**
  * Validate and sanitize the command that creates the update.
@@ -76458,12 +76458,13 @@ async function maybeCreateCommentAsync(input, messageId, messageBody) {
         });
     }
 }
-function setOutputs(variables, messageId, messageBody) {
+function setOutputs(variables, messageId, messageBody, diff) {
     for (const [name, value] of Object.entries(variables)) {
         (0,core.setOutput)(name, value);
     }
     (0,core.setOutput)('commentId', messageId);
     (0,core.setOutput)('comment', messageBody);
+    (0,core.setOutput)('fingerprint-diff', diff);
 }
 /**
  * Generate useful variables for the message body, and as step outputs.
@@ -76596,7 +76597,7 @@ async function handleNonPullRequest(config, input) {
     }
     (0,core.info)('Updating fingerprint database for the default branch push event.');
     const dbManager = await createFingerprintDbManagerAsync(input.packager, input.fingerprintDbCacheKey);
-    const { currentFingerprint } = await createFingerprintOutputAsync(dbManager, input);
+    const { currentFingerprint, diff } = await createFingerprintOutputAsync(dbManager, input);
     const associatedPRs = await getPullRequestFromGitCommitShaAsync({ token: input.githubToken }, input.currentGitCommitHash);
     const easBuildIds = (await Promise.all(associatedPRs.map(pr => queryEasBuildIdsFromPrAsync(pr.prNumber, config, input)))).flat();
     let manyBuilds;
@@ -76619,7 +76620,7 @@ async function handleNonPullRequest(config, input) {
         manyBuilds,
     });
     const variables = getVariables(config, []);
-    setOutputs(variables, '', '');
+    setOutputs(variables, '', '', diff);
 }
 async function queryEasBuildIdsFromPrAsync(prNumber, config, input) {
     const variables = getVariables(config, []);

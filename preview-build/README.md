@@ -88,7 +88,7 @@ Here is a summary of all the input options you can use.
 | **comment**                        | `true`                                         | If the action should summarize the EAS Update information as comment on a pull request         |
 | **comment-id**                     | _[see code][code-defaults]_                    | unique id template to prevent duplicate comments ([read more](#preventing-duplicate-comments)) |
 | **working-directory**              | -                                              | The relative directory of your Expo app                                                        |
-| **packager**                       | `yarn`                                       | The package manager used to install the fingerprint tools                                      |
+| **packager**                       | `yarn`                                         | The package manager used to install the fingerprint tools                                      |
 | **github-token**                   | `github.token`                                 | GitHub token to use when commenting on PR ([read more](#github-tokens))                        |
 | **fingerprint-version**            | `latest`                                       | `@expo/fingerprint` version to install                                                         |
 | **fingerprint-installation-cache** | `true`                                         | If the `@expo/fingerprint` should be cached to speed up installation                           |
@@ -99,18 +99,19 @@ Here is a summary of all the input options you can use.
 
 In case you want to reuse this action for other purpose, this action will set the following action outputs.
 
-| output name           | description                                                                                       |
-| --------------------- | ------------------------------------------------------------------------------------------------- |
-| **projectId**         | The resolved EAS project ID                                                                       |
-| **commentId**         | The unique comment ID to prevent duplicate comments ([read more](#preventing-duplicate-comments)) |
-| **comment**           | The comment with information about the updates                                                    |
-| **gitCommitHash**     | Git commit hash that was found when creating this build                                           |
-| **androidBuildId**    | EAS Build ID for Android                                                                          |
-| **androidLink**       | Absolute URL to Android build on expo.dev                                                         |
-| **androidAppVersion** | Version of the Android app                                                                        |
-| **iosBuildId**        | EAS Build ID for iOS                                                                              |
-| **iosLink**           | Absolute URL to iOS build on expo.dev                                                             |
-| **iosAppVersion**     | Version of the iOS app                                                                            |
+| output name           | description                                                                                                                                                                                   |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **projectId**         | The resolved EAS project ID                                                                                                                                                                   |
+| **commentId**         | The unique comment ID to prevent duplicate comments ([read more](#preventing-duplicate-comments))                                                                                             |
+| **comment**           | The comment with information about the updates                                                                                                                                                |
+| **gitCommitHash**     | Git commit hash that was found when creating this build                                                                                                                                       |
+| **androidBuildId**    | EAS Build ID for Android                                                                                                                                                                      |
+| **androidLink**       | Absolute URL to Android build on expo.dev                                                                                                                                                     |
+| **androidAppVersion** | Version of the Android app                                                                                                                                                                    |
+| **iosBuildId**        | EAS Build ID for iOS                                                                                                                                                                          |
+| **iosLink**           | Absolute URL to iOS build on expo.dev                                                                                                                                                         |
+| **iosAppVersion**     | Version of the iOS app                                                                                                                                                                        |
+| **fingerprint-diff**  | The diff between the current and the previous fingerprint. It is a JSON array of fingerprint diff. If the fingerprint does not change in between, the result diff will be an empty array `[]` |
 
 ## Example workflows
 
